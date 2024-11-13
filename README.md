@@ -11,7 +11,7 @@ pip install pymysql
 pip install Flask
 pip install Flask-SQLAlchemy
 ```
-
+Run this:
 ```bash
 python main.py
 ```
