@@ -10,7 +10,8 @@ Ensure you have Python installed. Install the required packages by running the f
 pip install pymysql
 pip install Flask
 pip install Flask-SQLAlchemy
-
+```
 
 ```bash
 python main.py
+```
