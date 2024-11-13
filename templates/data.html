@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLU Internet Service Provider</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='data.css') }}">
+</head>
+<body>
+    <header class="top-header">
+        <div class="logo-text">SLU Internet Service Provider</div>
+    </header>
+
+    <div class="main-content">
+        <div class="table-container">
+            <div class="table-controls">
+                <div class="left-controls">
+                    <select id="tableSelect" onchange="displayTable()">
+                        <option value="plans">Internet Service Plans</option>
+                        <option value="customers">Customer Records</option>
+                        <option value="tickets">Support Tickets</option>
+                        <option value="technicians">Technician Database</option>
+                        <option value="reports">Service Reports</option>
+                    </select>
+                </div>
+                <div class="right-controls">
+                    <div class="search-container">
+                        <input type="text" class="search-bar" placeholder="Search..." onkeyup="searchTable()">
+                    </div>
+                </div>
+            </div>
+
+            <h2 id="tableTitle" class="table-title">Internet Service Plans</h2>
+
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Plan Name</th>
+                        <th>Speed</th>
+                        <th>Duration</th>
+                        <th>Base Price</th>
+                        <th>Data Limit</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Basic Home</td>
+                        <td>50 Mbps</td>
+                        <td>12 Months</td>
+                        <td>₹5499.00</td>
+                        <td>Unlimited</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Premium Home</td>
+                        <td>100 Mbps</td>
+                        <td>12 Months</td>
+                        <td>₹7999.00</td>
+                        <td>Unlimited</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Pro Gaming</td>
+                        <td>200 Mbps</td>
+                        <td>12 Months</td>
+                        <td>₹9999.00</td>
+                        <td>Unlimited</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Business Basic</td>
+                        <td>150 Mbps</td>
+                        <td>12 Months</td>
+                        <td>₹8999.00</td>
+                        <td>Unlimited</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchServicePlans();
+        });
+
+        function fetchServicePlans() {
+            fetch('/service_plans')
+                .then(response => response.json())
+                .then(data => {
+                    populateTable(data);
+                })
+                .catch(error => console.error('Error fetching service plans:', error));
+        }
+
+        function populateTable(plans) {
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = '';
+
+            plans.forEach((plan, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${plan.plan_name}</td>
+                        <td>${plan.speed}</td>
+                        <td>${plan.validity}</td>
+                        <td>${plan.price}</td>
+                        <td>${plan.data_limit}</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function displayTable() {
+            const selectedTable = document.getElementById('tableSelect').value;
+            const tableTitle = document.getElementById('tableTitle');
+            tableTitle.textContent = document.getElementById('tableSelect').options[document.getElementById('tableSelect').selectedIndex].text;
+
+            if (selectedTable === 'plans') {
+                fetchServicePlans();
+            }
+            // You can add similar functions to fetch customers, tickets, etc.
+        }
+
+        function searchTable() {
+            const input = document.querySelector('.search-bar');
+            const filter = input.value.toLowerCase();
+            const tbody = document.querySelector('#dataTable tbody');
+            const rows = tbody.getElementsByTagName('tr');
+
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                let found = false;
+                for (let cell of cells) {
+                    if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                row.style.display = found ? '' : 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>
